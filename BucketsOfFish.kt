@@ -2,53 +2,43 @@ package com.ggwhiting.bucketsoffish
 
 
 class Fisherman{
-    private var bucketCapacity: ArrayList<Int> = arrayListOf()
-    private var fishSize: MutableList<Int> = mutableListOf()
-    private val bucketMap = HashMap<Int, Int>()
+    val bucketMap = HashMap<Int,Int>()
 
-    public fun setDetails(bc: ArrayList<Int>, fs: ArrayList<Int>){
-        this.bucketCapacity = bc
-        this.fishSize.addAll(fs)
-    }
+    public fun sort(bc: ArrayList<Int>, fs: ArrayList<Int>): ArrayList<Int> {
+// ...
+        var bucketSize = bc.size - 1
+        var bucketReversed = bc.reversed()
+        var fishCount = 0
 
-    public fun addToBucket(bucketID: Int){
-        if(!this.bucketMap.containsKey(bucketID)){
-            this.bucketMap.put(bucketID, 1)
-        }else{
-            var currentValue: Int = bucketMap?.get(bucketID) as Int
-            currentValue++
-            this.bucketMap.put(bucketID, currentValue)
-        }
+// set the hashmap bucketMap default values
+        for(bucket in bucketReversed){
+            var fishID = fs.size - 1
+            println(">> --- bucketID: "+bucket + " ---")
+            this.bucketMap.put(bucket, fishCount)
 
-        println("[debug] bucketMap = " + this.bucketMap.toString())
-    }
+            while(fishID >= 0){
+                println(">> fishID: "+fs.get(fishID))
 
-    public fun calculate(): Array<Int> {
-        var counter = this.bucketCapacity.size - 1
-        var position = 0
-        var output: ArrayList<Int> = arrayListOf()
-        var fishesInBucket: Int = 0
-
-        while(counter >= 0){
-            val currentBucket = this.bucketCapacity.get(counter)
-            fishesInBucket = 0
-
-            for(fish in this.fishSize){
-                println("[debug] bucket = " + currentBucket + " - fish   = " + fish.toString() + " - bucket = " + fishesInBucket.toString())
-                if(fish <= currentBucket){
-                    println("[update]" + fish.toString() + " <= " + currentBucket.toString())
-                    this.addToBucket(currentBucket)
-                    this.fishSize.remove(fish)
+                if(fs.get(fishID) <= bucket){
+                    fishCount++
+                    fs.removeAt(fishID)
                 }
+
+                this.bucketMap.put(bucket, fishCount)
+                fishID--
             }
-            counter--
+            
+            fishCount = 0
         }
 
+// tally up fishes to bucket size// create arraylist from answer 
+        val answer: ArrayList<Int> = arrayListOf()
 
-        println("[debug] output = " + output.toString())
+        for(amount in this.bucketMap.values){
+            answer.add(amount)
+        }
 
-
-        return arrayOf()
+        return answer
     }
 }
 
@@ -57,10 +47,8 @@ fun main(args: Array<String>) {
     val bucketCapacity: ArrayList<Int> = arrayListOf(7,5,2)
     val fishSize: ArrayList<Int> = arrayListOf(4,7,4,1,1,69)
     val fisherman = Fisherman()
-    fisherman.setDetails(bucketCapacity, fishSize)
-    val answer: Array<Int> = fisherman.calculate()
-    for(value in answer){
-        print(value)
-    }
-    println("\nEnd of Line")
+    
+    val answer = fisherman.sort(bucketCapacity, fishSize)
+
+    println(">> answer = " + answer.toString().reversed())
 }
